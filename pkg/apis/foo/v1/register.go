@@ -7,15 +7,15 @@ import (
 )
 
 var SchemeGroupVersion = schema.GroupVersion{
-	Group: "foo.com",
+	Group:   "foo.com",
 	Version: "v1",
 }
 
-var {
-	SchemeBuilder = runtime.SchemeBuilder
+var (
+	SchemeBuilder      = runtime.SchemeBuilder
 	localSchemeBuilder = &SchemeBuilder
-	AddToScheme = localSchemeBuilder.AddToScheme
-}
+	AddToScheme        = localSchemeBuilder.AddToScheme
+)
 
 func init() {
 	localSchemeBuilder.Register(addKnownTypes)
