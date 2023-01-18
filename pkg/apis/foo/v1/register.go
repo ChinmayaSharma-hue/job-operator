@@ -12,7 +12,7 @@ var SchemeGroupVersion = schema.GroupVersion{
 }
 
 var (
-	SchemeBuilder      = runtime.SchemeBuilder
+	SchemeBuilder      runtime.SchemeBuilder
 	localSchemeBuilder = &SchemeBuilder
 	AddToScheme        = localSchemeBuilder.AddToScheme
 )
@@ -21,7 +21,7 @@ func init() {
 	localSchemeBuilder.Register(addKnownTypes)
 }
 
-func Resource(resource string) scheme.GroupResource {
+func Resource(resource string) schema.GroupResource {
 	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }
 
@@ -37,7 +37,7 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&metav1.Status{},
 	)
 
-	metav1.AddGroupVersion(
+	metav1.AddToGroupVersion(
 		scheme,
 		SchemeGroupVersion,
 	)
