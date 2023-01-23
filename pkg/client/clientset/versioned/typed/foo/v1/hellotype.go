@@ -22,7 +22,7 @@ import (
 	"context"
 	"time"
 
-	v1 "github.com/ChinmayaSharma-hue/label-operator/pkg/apis/foo/v1"
+	v1 "github.com/ChinmayaSharma-hue/label-operator/pkg/apis/foo/v1alpha1"
 	scheme "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned/scheme"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"

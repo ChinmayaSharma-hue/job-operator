@@ -22,7 +22,7 @@ import (
 	"context"
 	time "time"
 
-	foov1 "github.com/ChinmayaSharma-hue/label-operator/pkg/apis/foo/v1"
+	foov1 "github.com/ChinmayaSharma-hue/label-operator/pkg/apis/foo/v1alpha1"
 	versioned "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned"
 	internalinterfaces "github.com/ChinmayaSharma-hue/label-operator/pkg/client/informers/externalversions/internalinterfaces"
 	v1 "github.com/ChinmayaSharma-hue/label-operator/pkg/client/listers/foo/v1"
