@@ -83,7 +83,7 @@ func (c *Controller) Run(ctx context.Context) error {
 func (c *Controller) addHello(obj interface{}) {
 	c.logger.Debug("Adding hello")
 
-	hello, ok := obj.(*hellov1alpha1.HelloType)
+	hello, ok := obj.(*hellov1alpha1.Hello)
 
 	if !ok {
 		c.logger.Errorf("Error while converting the object to hello type")
@@ -110,7 +110,7 @@ func New(
 		time.Second*10,
 	)
 
-	helloinformer := helloInformerFactory.Foo().V1().HelloTypes().Informer()
+	helloinformer := helloInformerFactory.Foo().V1alpha1().Hellos().Informer()
 
 	kubeInformerFactory := kubeinformers.NewSharedInformerFactory(
 		kubeClientSet,

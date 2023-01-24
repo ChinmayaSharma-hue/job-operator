@@ -8,7 +8,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func createJob(newHello *hellov1alpha1.HelloType, namespace string) *batchv1.Job {
+func createJob(newHello *hellov1alpha1.Hello, namespace string) *batchv1.Job {
 	return &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      newHello.ObjectMeta.Name,

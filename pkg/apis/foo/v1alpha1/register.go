@@ -1,4 +1,4 @@
-package v1
+package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -8,7 +8,7 @@ import (
 
 var SchemeGroupVersion = schema.GroupVersion{
 	Group:   "foo.com",
-	Version: "v1",
+	Version: "v1alpha1",
 }
 
 var (
@@ -28,8 +28,8 @@ func Resource(resource string) schema.GroupResource {
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(
 		SchemeGroupVersion,
-		&HelloType{},
-		&HelloTypeList{},
+		&Hello{},
+		&HelloList{},
 	)
 
 	scheme.AddKnownTypes(

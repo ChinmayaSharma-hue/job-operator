@@ -2,4 +2,4 @@
 // +k8s:defaulter-gen=TypeMeta
 // +groupName=foo.com
 
-package v1
+package v1alpha1

@@ -11,10 +11,9 @@ import (
 
 	helloalpha1clientset "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned"
 	"github.com/ChinmayaSharma-hue/label-operator/pkg/controller"
-
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
+	clientcmd "k8s.io/client-go/tools/clientcmd"
 )
 
 func main() {
@@ -41,6 +40,11 @@ func main() {
 	if errKubeConfig != nil {
 		logger.Errorf("Error while building the kubeconfig: %v", errKubeConfig)
 	}
+
+	// restConfig, errKubeConfig = rest.InClusterConfig()
+	// if errKubeConfig != nil {
+	// 	logger.Errorf("Error while building the kubeconfig: %v", errKubeConfig)
+	// }
 
 	// Create a clientset for the kubernetes cluster
 	kubeClientSet, err := kubernetes.NewForConfig(restConfig)

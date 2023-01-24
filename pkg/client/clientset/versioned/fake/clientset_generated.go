@@ -20,8 +20,8 @@ package fake
 
 import (
 	clientset "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned"
-	foov1 "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned/typed/foo/v1"
-	fakefoov1 "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned/typed/foo/v1/fake"
+	foov1alpha1 "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned/typed/foo/v1alpha1"
+	fakefoov1alpha1 "github.com/ChinmayaSharma-hue/label-operator/pkg/client/clientset/versioned/typed/foo/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -79,7 +79,7 @@ var (
 	_ testing.FakeClient  = &Clientset{}
 )
 
-// FooV1 retrieves the FooV1Client
-func (c *Clientset) FooV1() foov1.FooV1Interface {
-	return &fakefoov1.FakeFooV1{Fake: &c.Fake}
+// FooV1alpha1 retrieves the FooV1alpha1Client
+func (c *Clientset) FooV1alpha1() foov1alpha1.FooV1alpha1Interface {
+	return &fakefoov1alpha1.FakeFooV1alpha1{Fake: &c.Fake}
 }

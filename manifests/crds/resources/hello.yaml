@@ -1,0 +1,6 @@
+apiVersion: foo.com/v1alpha1
+kind: Hello
+metadata:
+  name: example-hello
+spec:
+  message: "Hello, World!"

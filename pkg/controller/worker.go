@@ -59,7 +59,7 @@ func (c *Controller) processItem(ctx context.Context, obj interface{}) error {
 
 	switch event.eventType {
 	case addHello:
-		return c.processAddHello(ctx, event.newObj.(*hellov1alpha1.HelloType))
+		return c.processAddHello(ctx, event.newObj.(*hellov1alpha1.Hello))
 	}
 
 	return nil
@@ -68,7 +68,7 @@ func (c *Controller) processItem(ctx context.Context, obj interface{}) error {
 // The processing of the add event is done by creating a job and then checking if the job
 // already exists. If the job already exists, it is skipped. If the job does not exist, it
 // is created.
-func (c *Controller) processAddHello(ctx context.Context, hello *hellov1alpha1.HelloType) error {
+func (c *Controller) processAddHello(ctx context.Context, hello *hellov1alpha1.Hello) error {
 	job := createJob(hello, c.namespace)
 
 	exists, err := resourceExists(job, c.jobinformer.GetIndexer())
