@@ -6,6 +6,7 @@ import (
 
 	hellov1alpha1 "github.com/ChinmayaSharma-hue/label-operator/pkg/apis/foo/v1alpha1"
 
+	batchv1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	cache "k8s.io/client-go/tools/cache"
@@ -25,6 +26,7 @@ func (c *Controller) runWorker(ctx context.Context) {
 // processed, and false if the item is not successfully processed.
 func (c *Controller) processNextItem(ctx context.Context) bool {
 	obj, shutdown := c.queue.Get()
+
 	if shutdown {
 		return false
 	}
@@ -59,7 +61,11 @@ func (c *Controller) processItem(ctx context.Context, obj interface{}) error {
 
 	switch event.eventType {
 	case addHello:
+		c.logger.Debug("Processing the item Hello.")
 		return c.processAddHello(ctx, event.newObj.(*hellov1alpha1.Hello))
+	case addHelloJob:
+		c.logger.Debug("Processing the item Job.")
+		return c.processAddHelloJob(ctx, event.job_resource.(*batchv1.Job), event.custom_resource.(*hellov1alpha1.Hello))
 	}
 
 	return nil
@@ -80,8 +86,65 @@ func (c *Controller) processAddHello(ctx context.Context, hello *hellov1alpha1.H
 		return nil
 	}
 
-	_, err = c.kubeClientSet.BatchV1().Jobs(c.namespace).Create(ctx, job, metav1.CreateOptions{})
+	created_job, err := c.kubeClientSet.BatchV1().Jobs(c.namespace).Create(ctx, job, metav1.CreateOptions{})
+
+	// I need to add the deepcopy of the job to the queue, so that I can process the completion of the job
+	// with the same name and create five more jobs in response to the completion of this job. The thing is,
+	// though, I have to have another informer somewhere in this package (here?) listening to the job with the same
+	// name as the job I have in the event queue, so the deepcopy of the job in the event queue is just so that
+	// I have some reference to the job whose completion would trigger the creation of five more jobs.
+	c.queue.Add(event{
+		eventType:       addHelloJob,
+		custom_resource: hello,
+		job_resource:    created_job,
+	})
+
 	return err
+}
+
+func (c *Controller) processAddHelloJob(ctx context.Context, hellojob *batchv1.Job, hello *hellov1alpha1.Hello) error {
+	key, err := cache.MetaNamespaceKeyFunc(hellojob)
+	if err != nil {
+		return fmt.Errorf("Error while getting the key from the job: %v", err)
+	}
+
+	for {
+		jobObject, exists, err := c.jobinformer.GetIndexer().GetByKey(key)
+		if err != nil {
+			return fmt.Errorf("Error while checking if the job exists: %v", err)
+		}
+
+		if exists {
+			job, ok := jobObject.(*batchv1.Job)
+			if !ok {
+				return fmt.Errorf("Error while converting the job object to job type")
+			}
+			if job.Status.Succeeded == 1 {
+				// Create five more jobs that do the same thing as this job, execute them in parallel? Find out how later.
+				for i := 0; i < 5; i++ {
+					new_job := createJobFromJob(job, hello, c.namespace, fmt.Sprintf("dependent-job-%d", i))
+
+					exists, err := resourceExists(new_job, c.jobinformer.GetIndexer())
+					if err != nil {
+						return fmt.Errorf("error while checking if the job exists: %v", err)
+					}
+
+					if exists {
+						c.logger.Infof("Job already exists, skipping creation.")
+						return nil
+					}
+
+					_, err = c.kubeClientSet.BatchV1().Jobs(c.namespace).Create(ctx, new_job, metav1.CreateOptions{})
+					if err != nil {
+						return fmt.Errorf("Error creating the job: %v", err)
+					}
+				}
+				return nil
+			} else if job.Status.Failed == 1 {
+				return fmt.Errorf("Failed to create five more jobs as the first job seems to have failed.")
+			}
+		}
+	}
 }
 
 func resourceExists(obj interface{}, indexer cache.Indexer) (bool, error) {
